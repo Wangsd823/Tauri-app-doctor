@@ -1,10 +1,17 @@
 <script setup>
 import { reactive } from 'vue';
-import userData from '../mock-data/user-data.json'
+import { UserMockData } from '../mock-data/user-data'
 
 // TODO search info
 const searchParams = reactive({
     userName: ''
+})
+// 数据
+const userDataList = reactive([])
+
+const _UserMockData = new UserMockData()
+_UserMockData.queryUserList().then(result => {
+    result && result.forEach(userData => userDataList.push(userData))
 })
 </script>
 <template>
@@ -18,7 +25,7 @@ const searchParams = reactive({
         </el-col>
         <!-- 列表 -->
         <el-col :span="24">
-            <el-table :data="userData" style="width: 100%">
+            <el-table :data="userDataList" style="width: 100%">
                 <el-table-column type="index" width="50" />
                 <el-table-column prop="userName" label="患者姓名" />
                 <el-table-column prop="age" label="患者年纪" />
