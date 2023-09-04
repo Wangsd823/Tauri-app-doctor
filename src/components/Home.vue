@@ -1,12 +1,11 @@
 <script setup>
 import { reactive, toRaw } from 'vue'
-// import fs from 'fs-extra'
 import { MockUtils } from '../utils'
-import userData from '../mock-data/user-data.json'
+import { UserMockData } from '../mock-data/user-data'
 import NewPatient from './NewPatient.vue'
 import DetailPatient from './DetailPatient.vue'
 
-const userInfoList = reactive(userData)
+// 组件部分
 const addNewPatient = reactive({
     show: false
 })
@@ -14,24 +13,27 @@ const detailPatient = reactive({
     show: false,
     data: {}
 })
+
+// 数据部分
+const userInfoList = reactive([])
+
+// mock data
+const _userMockData = new UserMockData()
+_userMockData.queryUserList().then(result => {
+    result && result.forEach(userInfo => userInfoList.push(userInfo));
+})
+
+
 // 组件 detail patient 处理
 const openDetailPatient = (userInfo) => {
     detailPatient.data = userInfo
     detailPatient.show = true
 }
-// 存储数据
-const saveJsonFile = async (saveData) => {
-    // TODO JSON 本地存储
-    // fs.writeFile('../mock-data/user-data.json', saveData, (error) => {
-    //     if (error) console.error(error);
-    // });
-}
 const addUserInfo = (userInfo) => {
     userInfoList.push({ ...userInfo, userCode: MockUtils.getUUID() })
     addNewPatient.show = false
-    // try {
-    //     saveJsonFile(toRaw(userInfoList))
-    // } catch (err) { }
+    // 存储数据
+    _userMockData.addSingleUserData({ ...userInfo, userCode: MockUtils.getUUID() })
 }
 
 </script>
