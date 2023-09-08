@@ -1,7 +1,8 @@
 <script setup>
-import { reactive, toRaw } from 'vue'
+import { reactive } from 'vue'
 import { MockUtils } from '../utils'
 import { UserMockData } from '../mock-data/user-data'
+import { RecordsMockData } from '../mock-data/records-data'
 import NewPatient from './NewPatient.vue'
 import DetailPatient from './DetailPatient.vue'
 
@@ -19,21 +20,41 @@ const userInfoList = reactive([])
 
 // mock data
 const _userMockData = new UserMockData()
-_userMockData.queryUserList().then(result => {
-    result && result.forEach(userInfo => userInfoList.push(userInfo));
-})
+const _recordMockData = new RecordsMockData()
 
+// 查询 home 主数据
+const queryHomeData = async () => {
+    const userDatas = await _userMockData.queryUserDatasForLastWeek()
+    userDatas.forEach(_user => {
+        _user[diagnosticRecord] = _sevenRecordDatas.filter(record => _user[_userMockData.keyPath] === record.userCode)
+        userInfoList.push(_user)
+    })
+}
+// 初次查询数据
+setTimeout(() => { queryHomeData() })
 
 // 组件 detail patient 处理
-const openDetailPatient = (userInfo) => {
-    detailPatient.data = userInfo
+const openDetailPatient = async (userInfo) => {
+    // 查询该用户下的记录
+    const recordDatas = await _recordMockData.queryRecordDatasByUserCode(userInfo.userCode)
+    detailPatient.data = { ...userInfo, diagnosticRecord: recordDatas }
     detailPatient.show = true
 }
-const addUserInfo = (userInfo) => {
+// TODO 拆解
+const addUserInfo = async (userInfo) => {
     userInfoList.push({ ...userInfo, userCode: MockUtils.getUUID() })
     addNewPatient.show = false
-    // 存储数据
-    _userMockData.addSingleUserData({ ...userInfo, userCode: MockUtils.getUUID() })
+    // 存储数据拆分
+    // userInfo
+    const { diagnosticRecord, ...userData } = userInfo
+    const userCode = MockUtils.getUUID()
+    const updateDate = new Date().getTime()
+    const addUserResult = await _userMockData.addSingleUserData({ ...userData, userCode, updateDate }).catch(error => console.error(error))
+    console.info('[Home.vue] -> addUserResult: ', addUserResult)
+    // record
+    const recordData = { ...diagnosticRecord, userCode, createDate: updateDate, [_recordMockData.keyPath]: MockUtils.getUUID() }
+    const addRecordResult = await _recordMockData.addSingleRecordData(recordData).catch(error => console.error(error))
+    console.info('[Home.vue] -> addUserResult: ', addRecordResult)
 }
 
 </script>

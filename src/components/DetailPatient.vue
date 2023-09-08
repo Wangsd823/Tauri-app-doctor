@@ -20,7 +20,8 @@ const closedDialog = () => {
 </script>
 
 <template>
-    <el-dialog v-model="props.modelValue" title="浏览医案" width="40%" class="new-patient-dialog-wrapper" @closed="closedDialog">
+    <el-dialog v-model="props.modelValue" title="浏览医案" width="40%" class="new-patient-dialog-wrapper"
+        @closed="closedDialog">
         <!-- 用户信息 -->
         <el-row>
             <el-col :span="24">
