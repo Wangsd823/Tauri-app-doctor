@@ -61,9 +61,7 @@ class UserMockData extends IndexedDBUtils.IndexedDBBase {
             let index = null
             let result = []
             const _objectStore = await this._getObjectStore([this.storeName], 'readonly', this.storeName)
-            let _openedCursor = CommonUtils.isEmptyForString(userName)
-                ? _objectStore.openCursor()
-                : _objectStore.index('user_table-userName').openCursor(IDBKeyRange.only(userName))
+            let _openedCursor = CommonUtils.isEmptyForString(userName) ? _objectStore.openCursor() : _objectStore.index('user_table-userName').openCursor(IDBKeyRange.only(userName))
             _openedCursor.onerror = (event) => reject(event.target.error)
             _openedCursor.onsuccess = (event) => {
                 const cursor = event.target.result
@@ -117,19 +115,10 @@ class UserMockData extends IndexedDBUtils.IndexedDBBase {
         return new Promise(async (resolve, reject) => {
             const startTime = new Date().getTime() - 7 * 24 * 60 * 60 * 1000
             const _objectStore = await this._getObjectStore([this.storeName], 'readonly', this.storeName)
-            const _openedCursor = _objectStore
-                .index('user_table-updateDate')
-                .openCursor(IDBKeyRange.bound(startTime, new Date().getTime(), true, true))
+            const _openedCursor = _objectStore.index('user_table-updateDate').getAll(IDBKeyRange.lowerBound(startTime, true))
             _openedCursor.onerror = (event) => reject(event.target.error)
             _openedCursor.onsuccess = (event) => {
-                const cursor = event.target.result
-                const result = []
-                if (!cursor) {
-                    resolve(result)
-                    return
-                }
-                result.push(cursor.value)
-                cursor.continue()
+                resolve(event.target.result || [])
             }
         })
     }
@@ -137,7 +126,7 @@ class UserMockData extends IndexedDBUtils.IndexedDBBase {
     get indexArr() {
         return [
             { indexName: 'user_table-userName', valueKey: 'userName', unique: false },
-            { indexName: 'user_table-updateDate', valueKey: 'updateDate', unique: false }
+            { indexName: 'user_table-updateDate', valueKey: 'updateDate', unique: false },
         ]
     }
 

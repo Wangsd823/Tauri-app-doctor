@@ -8,9 +8,12 @@ const searchParams = reactive({
 })
 // 数据
 const userDataList = reactive([])
+let pageNumber = 1
+let pageSize = 10
 
 const _UserMockData = new UserMockData()
-_UserMockData.queryUserList().then(result => {
+
+_UserMockData.queryUserInfoForPage(pageNumber, pageSize, searchParams).then(result => {
     result && result.forEach(userData => userDataList.push(userData))
 })
 </script>
