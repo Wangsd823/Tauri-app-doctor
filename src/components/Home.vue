@@ -25,8 +25,8 @@ const _recordMockData = new RecordsMockData()
 // 查询 home 主数据
 const queryHomeData = async () => {
     const userDatas = await _userMockData.queryUserDatasForLastWeek()
+    console.log('queryHomeData: ', userDatas)
     userDatas.forEach(_user => {
-        _user[diagnosticRecord] = _sevenRecordDatas.filter(record => _user[_userMockData.keyPath] === record.userCode)
         userInfoList.push(_user)
     })
 }

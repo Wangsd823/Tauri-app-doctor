@@ -1,4 +1,3 @@
-import { event } from '@tauri-apps/api'
 import { IndexedDBUtils, ConstantUtils, CommonUtils } from '../utils'
 
 class RecordsMockData extends IndexedDBUtils.IndexedDBBase {
@@ -25,7 +24,7 @@ class RecordsMockData extends IndexedDBUtils.IndexedDBBase {
         return new Promise(async (resolve, reject) => {
             const result = []
             if (CommonUtils.isEmptyForString(userCode)) return resolve(results)
-            const _objectStore = await this._getObjectStore([this.storeName], ConstantUtils.IDBTransactionType.EDIT.code)
+            const _objectStore = await this._getObjectStore([this.storeName], ConstantUtils.IDBTransactionType.EDIT.code, this.storeName)
             const _request = _objectStore.index('record_user_id_index').openCursor()
             _request.onerror = (event) => reject(event.target.error)
             _request.onsuccess = (event) => {

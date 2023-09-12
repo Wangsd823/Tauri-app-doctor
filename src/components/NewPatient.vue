@@ -6,7 +6,8 @@ import { MockUtils } from '../utils'
 const dialogVisible = defineProps(['value'])
 // emits
 const saveEmit = defineEmits(['save'])
-// data
+
+// default data
 const userInfo = reactive({
     userName: '',
     age: 1,
@@ -16,12 +17,7 @@ const userInfo = reactive({
         date: MockUtils.getCurrentDate(),
         record: {
             illnessInfo: {
-                images: [
-                    {
-                        name: 'food.jpeg',
-                        url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100',
-                    }
-                ],
+                images: [],
                 comment: ''
             },
             diagnosis: '',
@@ -31,8 +27,7 @@ const userInfo = reactive({
             },
             note: ''
         }
-    }],
-
+    }]
 })
 let collapseActiveNames = ref(['1', '2', '3', '4'])
 const collapseChange = (value) => {
@@ -54,7 +49,6 @@ const addpRescriptionInfo = () => {
 const saveNewPatientInfo = () => {
     saveEmit('save', userInfo)
 }
-
 
 </script>
 <template>
@@ -96,8 +90,8 @@ const saveNewPatientInfo = () => {
                         </el-upload>
                     </el-col>
                     <el-col :span="24">
-                        <el-input v-model="userInfo.diagnosticRecord[0].record.illnessInfo.comment" :rows="3" type="textarea"
-                            placeholder="请填写病情描述." />
+                        <el-input v-model="userInfo.diagnosticRecord[0].record.illnessInfo.comment" :rows="3"
+                            type="textarea" placeholder="请填写病情描述." />
                     </el-col>
                 </el-row>
             </el-collapse-item>
@@ -112,28 +106,30 @@ const saveNewPatientInfo = () => {
                             v-model="userInfo.diagnosticRecord[0].record.prescription.name" />
                     </el-col>
                     <el-col :span="24">
-                        <el-row>
+                        <el-row style="line-height: 20px;">
                             <template v-for="presInfo in userInfo.diagnosticRecord[0].record.prescription.infoList">
-                                <el-col :span="10" style="margin-bottom: 5px;">
+                                <el-col :span="8" style="display: flex;align-items: center;">
                                     <el-autocomplete v-model="presInfo.inputName" :fetch-suggestions="fetchPrescriptionApi"
-                                        clearable class="inline-input w-50" placeholder="请填写." />
-                                    <el-input-number v-model="presInfo.inputValue" :min="0"></el-input-number>
-                                    <el-text>&nbsp;g</el-text>
+                                        clearable class="inline-input w-20" style="margin-right: 2px;" />
+                                    <el-input-number v-model="presInfo.inputValue" :min="0" :step="0.01"
+                                        size="small"></el-input-number>
                                 </el-col>
                             </template>
-                            <el-col :span="4">
-                                <el-button @click="addpRescriptionInfo">添加</el-button>
+                            <el-col :span="8" style="display: flex;align-items: center;">
+                                <el-button @click="addpRescriptionInfo" size="small">添加</el-button>
+                                <el-button @click="userInfo.diagnosticRecord[0].record.prescription.infoList = []" size="small">重置</el-button>
                             </el-col>
                         </el-row>
                     </el-col>
                     <el-col :span="24">
-                        <el-input v-model="userInfo.diagnosticRecord[0].record.prescription.comment" :rows="3" type="textarea"
-                            placeholder="请填写备注." />
+                        <el-input v-model="userInfo.diagnosticRecord[0].record.prescription.comment" :rows="3"
+                            type="textarea" placeholder="请填写备注." />
                     </el-col>
                 </el-row>
             </el-collapse-item>
             <el-collapse-item title="按语" name="4">
-                <el-input v-model="userInfo.diagnosticRecord[0].record.note" :rows="3" type="textarea" placeholder="请填写按语." />
+                <el-input v-model="userInfo.diagnosticRecord[0].record.note" :rows="3" type="textarea"
+                    placeholder="请填写按语." />
             </el-collapse-item>
         </el-collapse>
         <template #footer>
@@ -160,5 +156,10 @@ const saveNewPatientInfo = () => {
 
 .new-patient-dialog-wrapper .el-collapse-item__header {
     font-size: 18px;
+}
+
+.new-patient-dialog-wrapper .el-autocomplete,
+.new-patient-dialog-wrapper .el-input-number {
+    width: 100px;
 }
 </style>
