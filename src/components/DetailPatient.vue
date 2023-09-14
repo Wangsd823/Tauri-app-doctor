@@ -34,7 +34,6 @@ const closedDialog = () => {
         </el-row>
         <el-divider />
         <!-- 诊断记录 -->
-        <!-- TODO 初诊 -->
         <el-collapse v-model="collapseActiveNames">
             <template v-for="(recordInfo, index) in props.data.diagnosticRecord">
                 <el-collapse-item :title="`${index === 0 ? '初诊记录' : '复诊记录'}: ${recordInfo.date}`" :name="index">

@@ -8,7 +8,7 @@ class RecordsMockData extends IndexedDBUtils.IndexedDBBase {
      */
     addSingleRecordData(recordData) {
         return new Promise(async (resolve, reject) => {
-            const _objectStore = await this._getObjectStore([this.storeName], ConstantUtils.IDBTransactionType.EDIT.code)
+            const _objectStore = await this._getObjectStore([this.storeName], ConstantUtils.IDBTransactionType.EDIT.code, this.storeName)
             const _request = _objectStore.add(recordData)
             _request.onerror = (event) => reject(event.target.error)
             _request.onsuccess = (event) => resolve(event.target.result)

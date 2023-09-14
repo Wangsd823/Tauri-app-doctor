@@ -37,6 +37,7 @@ const collapseChange = (value) => {
 // 删除图片
 const handleRemove = (delFile) => {
     const illnessInfo = userInfo.diagnosticRecord[0].record.illnessInfo
+    illnessInfo.images
     // TODO 删除
 }
 
@@ -93,19 +94,6 @@ const saveNewPatientInfo = () => {
                             <el-icon>
                                 <Plus />
                             </el-icon>
-                            <template #file="{ file }">
-                                <div>
-                                    <img class="el-upload-list__item-thumbnail" :src="file.url" /><span
-                                        class="el-upload-list__item-actions">
-                                        <span class="el-upload-list__item-delete"
-                                            @click="handleRemove(file)">
-                                            <el-icon>
-                                                <Delete />
-                                            </el-icon>
-                                        </span>
-                                    </span>
-                                </div>
-                            </template>
                         </el-upload>
                     </el-col>
                     <el-col :span="24">
