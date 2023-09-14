@@ -51,8 +51,8 @@ const handleSelect = (key) => {
                 </el-row>
             </el-header>
             <el-main>
-                <Home v-show="activeIndex == 1" />
-                <PatientRecords v-show="activeIndex == 2" />
+                <Home v-if="activeIndex == 1" />
+                <PatientRecords v-if="activeIndex == 2" />
             </el-main>
         </el-container>
     </div>

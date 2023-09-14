@@ -34,6 +34,12 @@ const collapseChange = (value) => {
     collapseActiveNames = value
 }
 
+// 删除图片
+const handleRemove = (delFile) => {
+    const illnessInfo = userInfo.diagnosticRecord[0].record.illnessInfo
+    // TODO 删除
+}
+
 // 选择处方
 const fetchPrescriptionApi = (queryValue, callback) => {
     // TODO 数据库 sqlite
@@ -82,11 +88,24 @@ const saveNewPatientInfo = () => {
             <el-collapse-item title="病情" name="1">
                 <el-row :gutter="2">
                     <el-col :span="24">
-                        <el-upload v-model:file-list="userInfo.diagnosticRecord[0].record.illnessInfo.images"
-                            list-type="picture-card">
+                        <el-upload v-model:file-list="userInfo.diagnosticRecord[0].record.illnessInfo.images" action="#"
+                            :auto-upload="false" list-type="picture-card">
                             <el-icon>
                                 <Plus />
                             </el-icon>
+                            <template #file="{ file }">
+                                <div>
+                                    <img class="el-upload-list__item-thumbnail" :src="file.url" /><span
+                                        class="el-upload-list__item-actions">
+                                        <span class="el-upload-list__item-delete"
+                                            @click="handleRemove(file)">
+                                            <el-icon>
+                                                <Delete />
+                                            </el-icon>
+                                        </span>
+                                    </span>
+                                </div>
+                            </template>
                         </el-upload>
                     </el-col>
                     <el-col :span="24">
@@ -117,7 +136,8 @@ const saveNewPatientInfo = () => {
                             </template>
                             <el-col :span="8" style="display: flex;align-items: center;">
                                 <el-button @click="addpRescriptionInfo" size="small">添加</el-button>
-                                <el-button @click="userInfo.diagnosticRecord[0].record.prescription.infoList = []" size="small">重置</el-button>
+                                <el-button @click="userInfo.diagnosticRecord[0].record.prescription.infoList = []"
+                                    size="small">重置</el-button>
                             </el-col>
                         </el-row>
                     </el-col>
