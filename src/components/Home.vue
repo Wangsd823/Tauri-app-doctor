@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from 'vue'
+import { reactive, toRaw } from 'vue'
 import { MockUtils } from '../utils'
 import { UserMockData } from '../mock-data/user-data'
 import { RecordsMockData } from '../mock-data/records-data'
@@ -49,12 +49,12 @@ const addUserInfo = async (userInfo) => {
     const { diagnosticRecord, ...userData } = userInfo
     const userCode = MockUtils.getUUID()
     const updateDate = new Date().getTime()
-    const addUserResult = await _userMockData.addSingleUserData({ ...userData, userCode, updateDate }).catch(error => console.error(error))
-    console.info('[Home.vue] -> addUserResult: ', addUserResult)
+    console.info('[Home.vue] -> addUserResult: ', { ...userData, userCode, updateDate })
+   await _userMockData.addSingleUserData({ ...userData, userCode, updateDate }).catch(error => console.error(error))
     // record
-    const recordData = { ...diagnosticRecord, userCode, createDate: updateDate, [_recordMockData.keyPath]: MockUtils.getUUID() }
-    const addRecordResult = await _recordMockData.addSingleRecordData(recordData).catch(error => console.error(error))
-    console.info('[Home.vue] -> addUserResult: ', addRecordResult)
+    const recordData = { ...toRaw(diagnosticRecord[0]), userCode, createDate: updateDate, [_recordMockData.keyPath]: MockUtils.getUUID() }
+    console.info('[Home.vue] -> addUserResult: ', recordData)
+    await _recordMockData.addSingleRecordData(recordData).catch(error => console.error(error))
 }
 
 </script>

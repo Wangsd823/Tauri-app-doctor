@@ -37,6 +37,7 @@ const collapseChange = (value) => {
 // 删除图片
 const handleRemove = (delFile) => {
     const illnessInfo = userInfo.diagnosticRecord[0].record.illnessInfo
+    illnessInfo.images
     // TODO 删除
 }
 

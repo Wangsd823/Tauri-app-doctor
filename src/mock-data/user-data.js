@@ -61,7 +61,9 @@ class UserMockData extends IndexedDBUtils.IndexedDBBase {
             let index = null
             let result = []
             const _objectStore = await this._getObjectStore([this.storeName], 'readonly', this.storeName)
-            let _openedCursor = CommonUtils.isEmptyForString(userName) ? _objectStore.openCursor() : _objectStore.index('user_table-userName').openCursor(IDBKeyRange.only(userName))
+            let _openedCursor = CommonUtils.isEmptyForString(userName)
+                ? _objectStore.openCursor()
+                : _objectStore.index('user_table-userName').openCursor(IDBKeyRange.only(userName))
             _openedCursor.onerror = (event) => reject(event.target.error)
             _openedCursor.onsuccess = (event) => {
                 const cursor = event.target.result
@@ -126,7 +128,7 @@ class UserMockData extends IndexedDBUtils.IndexedDBBase {
     get indexArr() {
         return [
             { indexName: 'user_table-userName', valueKey: 'userName', unique: false },
-            { indexName: 'user_table-updateDate', valueKey: 'updateDate', unique: false },
+            { indexName: 'user_table-updateDate', valueKey: 'updateDate', unique: false }
         ]
     }
 

@@ -8,6 +8,7 @@ class IndexedDBBase {
         this.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB
         // 数据库实例
         this._dbInstance = null
+        //
     }
 
     _close() {
@@ -23,11 +24,11 @@ class IndexedDBBase {
             const request = this.indexedDB.open(this.database, this.version)
             request.onupgradeneeded = (event) => {
                 const _dbInstance = event.target.result
-                // TODO add storeName check
-                const _objectStore = _dbInstance.createObjectStore(this.storeName, { keyPath: this.keyPath })
-                // FIXME 创建索引 扩展化
-                this.indexArr.forEach((indexInfo) => {
-                    _objectStore.createIndex(indexInfo.indexName, indexInfo.valueKey, { unique: indexInfo.unique })
+                this.storeNameConfig.forEach((storeInfo) => {
+                    const _objectStore = _dbInstance.createObjectStore(storeInfo.name, { keyPath: storeInfo.keyPath })
+                    storeInfo.indexArr.forEach((indexInfo) => {
+                        _objectStore.createIndex(indexInfo.indexName, indexInfo.valueKey, { unique: indexInfo.unique })
+                    })
                 })
             }
             request.onerror = (event) => reject(event.target.error)
@@ -71,6 +72,30 @@ class IndexedDBBase {
      */
     get database() {
         return 'tauri-app-doctor'
+    }
+
+    /**
+     * store 初始化配置
+     */
+    get storeNameConfig() {
+        return [
+            {
+                name: 'user-data-table',
+                indexArr: [
+                    { indexName: 'user_table-userName', valueKey: 'userName', unique: false },
+                    { indexName: 'user_table-updateDate', valueKey: 'updateDate', unique: false }
+                ],
+                keyPath: 'userCode'
+            },
+            {
+                name: 'record-data-table',
+                indexArr: [
+                    { indexName: 'record_create_data_index', valueKey: 'createDate', unique: true },
+                    { indexName: 'record_user_id_index', valueKey: 'userCode', unique: true }
+                ],
+                keyPath: 'recordId'
+            }
+        ]
     }
 
     /**

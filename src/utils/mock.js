@@ -13,5 +13,5 @@ export const getUUID = () => {
  * 获取当天日期
  */
 export const getCurrentDate = (formatStr = 'yyyy-MM-dd') => {
-    return Random.date(formatStr)
+    return Random.now(formatStr)
 }

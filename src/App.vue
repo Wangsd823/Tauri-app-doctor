@@ -5,6 +5,8 @@ import PatientRecords from './components/PatientRecords.vue'
 
 const activeIndex = ref('1')
 
+const searchInput = ref('')
+
 const handleSelect = (key) => {
     activeIndex.value = key
 }
@@ -37,8 +39,7 @@ const handleSelect = (key) => {
                         <el-row>
                             <el-col :span="12"></el-col>
                             <el-col :span="12" class="search-input_wrapper">
-                                <!-- TODO icon Search-->
-                                <el-input v-model="input1" class="w-50 m-2" size="large" placeholder="Please Input">
+                                <el-input v-model="searchInput" class="w-50 m-2" size="large">
                                     <template #append>
                                         <el-icon>
                                             <Search />
