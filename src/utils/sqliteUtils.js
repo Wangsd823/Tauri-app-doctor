@@ -1,4 +1,5 @@
 import axios from 'axios'
+
 class SqliteReader {
     constructor() {
         this._dbFile = 'medicinesearch.db'
