@@ -141,7 +141,7 @@ class UserMockData extends IndexedDBUtils.IndexedDBBase {
     }
 
     get version() {
-        return 3
+        return 5
     }
 }
 

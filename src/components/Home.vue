@@ -3,8 +3,8 @@ import { reactive, toRaw } from 'vue'
 import { MockUtils } from '../utils'
 import { UserMockData } from '../mock-data/user-data'
 import { RecordsMockData } from '../mock-data/records-data'
-import NewPatient from './NewPatient.vue'
-import DetailPatient from './DetailPatient.vue'
+import addPatient from './addPatient.vue'
+import patientDetail from './patientDetail.vue'
 
 // 组件部分
 const addNewPatient = reactive({
@@ -34,27 +34,30 @@ const queryHomeData = async () => {
 setTimeout(() => { queryHomeData() })
 
 // 组件 detail patient 处理
-const openDetailPatient = async (userInfo) => {
+const openDetailPatient = async (userData) => {
     // 查询该用户下的记录
-    const recordDatas = await _recordMockData.queryRecordDatasByUserCode(userInfo.userCode)
-    detailPatient.data = { ...userInfo, diagnosticRecord: recordDatas }
+    const recordDatas = await _recordMockData.queryRecordDatasByUserCode(userData.userCode)
+    detailPatient.data = { ...userData, recordDataList: recordDatas }
     detailPatient.show = true
 }
-// TODO 拆解
-const addUserInfo = async (userInfo) => {
-    userInfoList.push({ ...userInfo, userCode: MockUtils.getUUID() })
-    addNewPatient.show = false
-    // 存储数据拆分
-    // userInfo
-    const { diagnosticRecord, ...userData } = userInfo
+const patientDetailComplete = () => {
+    detailPatient.show = false
+}
+
+const addUserInfo = async (userData) => {
     const userCode = MockUtils.getUUID()
     const updateDate = new Date().getTime()
-    console.info('[Home.vue] -> addUserResult: ', { ...userData, userCode, updateDate })
-   await _userMockData.addSingleUserData({ ...userData, userCode, updateDate }).catch(error => console.error(error))
+    userInfoList.push({ ...userData.userBaseInfo, userCode })
+    addNewPatient.show = false
+
+    // 存储数据拆分
+    const { userBaseInfo, ...diagnosticData } = userData
+    console.info('[Home.vue] -> addUserResult: ', { ...userBaseInfo, userCode, updateDate })
+    await _userMockData.addSingleUserData({ ...userBaseInfo, userCode, updateDate })
     // record
-    const recordData = { ...toRaw(diagnosticRecord[0]), userCode, createDate: updateDate, [_recordMockData.keyPath]: MockUtils.getUUID() }
+    const recordData = { ...diagnosticData, userCode, createDate: updateDate, [_recordMockData.keyPath]: MockUtils.getUUID() }
     console.info('[Home.vue] -> addUserResult: ', recordData)
-    await _recordMockData.addSingleRecordData(recordData).catch(error => console.error(error))
+    await _recordMockData.addSingleRecordData(recordData)
 }
 
 </script>
@@ -74,25 +77,24 @@ const addUserInfo = async (userInfo) => {
         </el-row>
         <!-- 患者信息 -->
         <div class="userinfo-show-wrapper">
-            <template v-for="userInfo in userInfoList">
+            <template v-for="userData in userInfoList">
                 <el-space wrap :size="10">
-                    <el-card shadow="hover" class="card-user_info_wrapper" @click="openDetailPatient(userInfo)">
+                    <el-card shadow="hover" class="card-user_info_wrapper" @click="openDetailPatient(userData)">
                         <el-avatar :size="100" shape="square" fit="fill"
                             src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg" />
                         <el-form style="width: 100%;" label-position="left">
-                            <el-form-item label="姓名">{{ userInfo.userName }}</el-form-item>
-                            <el-form-item label="年纪">{{ userInfo.age }}&nbsp;岁</el-form-item>
-                            <el-form-item label="联系方式">{{ userInfo.phone }}</el-form-item>
-                            <el-form-item label="地址">{{ userInfo.address }}</el-form-item>
+                            <el-form-item label="姓名">{{ userData.userName }}</el-form-item>
+                            <el-form-item label="年纪">{{ userData.userAge }}&nbsp;岁</el-form-item>
+                            <el-form-item label="联系方式">{{ userData.userPhone }}</el-form-item>
+                            <el-form-item label="地址">{{ userData.userAddress }}</el-form-item>
                         </el-form>
                     </el-card>
                 </el-space>
             </template>
         </div>
         <!-- 组件部分 -->
-        <NewPatient v-model="addNewPatient.show" @save="addUserInfo" />
-        <DetailPatient v-model:modelValue="detailPatient.show" :data="detailPatient.data"
-            @closed="detailPatient.show = false" />
+        <addPatient v-model="addNewPatient.show" @complete="addUserInfo" />
+        <patientDetail v-model="detailPatient.show" :data="detailPatient.data" @complete="patientDetailComplete" />
     </div>
 </template>
 

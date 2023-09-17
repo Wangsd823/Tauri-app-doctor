@@ -9,7 +9,10 @@ class SqliteReader {
     }
 
     async _open() {
-        const response = await this._axios.get(this._dbFile, { responseType: 'arraybuffer' })
+        const response = await this._axios.get(this._dbFile, {
+            'Cache-Control': 'no-cache',
+            responseType: 'arraybuffer'
+        })
         this._db = new this._SQL.Database(new Uint8Array(response.data))
     }
 

@@ -1,0 +1,152 @@
+<script setup>
+/**
+ * 添加患者医案
+ */
+import { reactive, ref, toRaw, toRef } from 'vue'
+import { InitPatientData } from '../config/index'
+import libraryDialog from './libraryDialog.vue'
+
+const props = defineProps({
+    modelValue: { type: Boolean, default: false }
+})
+const _$emit = defineEmits(['update:modelValue', 'complete'])
+
+/**
+ * 默认数据变量
+ */
+// 用户基础数据
+const userBaseInfo = reactive(InitPatientData.initUserBaseInfo)
+// 病情信息
+const illnessInfo = reactive(InitPatientData.initIllnessInfo)
+// 诊断信息
+const diagnosticNote = ref('')
+// 处方信息
+const formulaInfo = reactive(InitPatientData.initFormulaInfo)
+// 按语
+const notesStr = ref('')
+
+// 组件
+const libraryDialogVisible = ref(false)
+// 组件函数
+const libraryDialogRowClick = (selectedInfo) => {
+    console.log('[libraryDialogRowClick]: ', selectedInfo)
+    libraryDialogVisible.value = false
+    formulaInfo.subList.push({
+        labelText: `${selectedInfo.medicineTypeName}(单位：${selectedInfo.medicineUnit})`,
+        inputValue: 0.01
+    })
+}
+const openFormulaDialog = () => {
+    libraryDialogVisible.value = true
+}
+const resetFormulaSubList = () => {
+    formulaInfo.subList.length = 0
+}
+const savePatientInfo = () => {
+    const addUserData = {
+        userBaseInfo: toRaw(userBaseInfo),
+        illnessInfo: toRaw(illnessInfo),
+        formulaInfo: toRaw(formulaInfo),
+        notesStr: notesStr.value,
+        diagnosticNote: diagnosticNote.value
+    }
+    _$emit('complete', addUserData)
+}
+
+
+/**
+ * 清楚数据
+ */
+const _clearData = () => {
+
+}
+const onDialogBeforeClosed = () => {
+    _$emit('update:modelValue', false)
+    _clearData()
+}
+
+</script>
+<style scoped>
+.add_patient_container :deep(.el-overlay-dialog) {
+    overflow: hidden;
+}
+
+.add_patient_container :deep(.el-dialog__body) {
+    max-height: 35rem;
+    overflow-y: scroll;
+}
+
+.add_patient_container :deep(.card-header) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+</style>
+<template>
+    <div class="add_patient_container">
+        <el-dialog :model-value="modelValue" width="750px" title="新增患者医案" :destroy-on-close="true"
+            @close="onDialogBeforeClosed">
+            <!-- 用户信息 -->
+            <el-form style="width: 100%;" label-position="left" label-width="100">
+                <el-form-item label="姓名">
+                    <el-input v-model="userBaseInfo.userName" placeholder="请输入姓名" />
+                </el-form-item>
+                <el-form-item label="年龄">
+                    <el-input-number v-model="userBaseInfo.userAge" :min="1" :max="100" />
+                </el-form-item>
+                <el-form-item label="联系方式">
+                    <el-input v-model="userBaseInfo.userPhone" />
+                </el-form-item>
+                <el-form-item label="常住地址">
+                    <el-input v-model="userBaseInfo.userAddress" :rows="3" type="textarea" />
+                </el-form-item>
+            </el-form>
+            <el-divider />
+            <el-card header="病情详情">
+                <el-input v-model="illnessInfo.comment" :rows="2" type="textarea" />
+                <div style="height: 10px;"></div>
+                <el-upload v-model:file-list="illnessInfo.imageList" action="#" :auto-upload="false"
+                    list-type="picture-card">
+                    <el-icon>
+                        <Plus />
+                    </el-icon>
+                </el-upload>
+            </el-card>
+            <el-divider />
+            <el-card header="诊断情况">
+                <el-input v-model="diagnosticNote" :rows="3" type="textarea" />
+            </el-card>
+            <el-divider />
+            <el-card>
+                <template #header>
+                    <div class="card-header">
+                        <div>处方信息</div>
+                        <div>
+                            <el-button type="success" @click="openFormulaDialog">选择处方</el-button>
+                            <el-button type="info" @click="resetFormulaSubList">重置</el-button>
+                        </div>
+                    </div>
+                </template>
+                <el-input v-model="formulaInfo.comment" :rows="3" type="textarea" />
+                <div style="height: 10px;"></div>
+                <el-form :inline="true" label-position="left" label-width="200" style="width: 100%;">
+                    <template v-for="info in formulaInfo.subList">
+                        <el-form-item :label="info.labelText">
+                            <el-input-number v-model="info.inputValue" :min="0" :step="0.01" />
+                        </el-form-item>
+                    </template>
+                </el-form>
+            </el-card>
+            <el-divider />
+            <el-card header="按语情况">
+                <el-input v-model="notesStr" :rows="3" type="textarea" />
+            </el-card>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button type="primary" @click="savePatientInfo">保存</el-button>
+                </span>
+            </template>
+        </el-dialog>
+        <libraryDialog v-model="libraryDialogVisible" @row-click="libraryDialogRowClick" />
+    </div>
+</template>

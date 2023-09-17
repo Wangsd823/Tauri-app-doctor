@@ -75,7 +75,7 @@ const tableRowClick = (row, column, event) => {
 </style>
 
 <template>
-    <el-dialog :model-value="modelValue" width="80%" :title="title" :destroy-on-close="true" @close="onDialogBeforeClosed" @closed="onDialogclosed">
+    <el-dialog :model-value="modelValue" width="850px" :title="title" :destroy-on-close="true" @close="onDialogBeforeClosed" @closed="onDialogclosed">
         <div class="library_dialog_header">
             <el-input v-model="queryInputVal" @keyup.enter="queryTableData" />
             <el-button type="primary" @click="queryTableData">搜索</el-button>

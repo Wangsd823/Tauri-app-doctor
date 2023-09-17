@@ -102,7 +102,7 @@ class IndexedDBBase {
      * database version: 2
      */
     get version() {
-        return 2
+        return 5
     }
 }
 

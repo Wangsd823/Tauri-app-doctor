@@ -55,7 +55,7 @@ class RecordsMockData extends IndexedDBUtils.IndexedDBBase {
     }
 
     get version() {
-        return 3
+        return 5
     }
 }
 
