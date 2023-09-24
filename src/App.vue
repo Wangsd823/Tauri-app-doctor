@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import Home from './components/Home.vue'
-import PatientRecords from './components/PatientRecords.vue'
+import PatientRecords from './components/patientRecords.vue'
 
 const activeIndex = ref('1')
 

@@ -46,7 +46,7 @@ class RecordsMockData extends IndexedDBUtils.IndexedDBBase {
     get indexArr() {
         return [
             { indexName: 'record_create_data_index', valueKey: 'createDate', unique: true },
-            { indexName: 'record_user_id_index', valueKey: 'userCode', unique: true }
+            { indexName: 'record_user_id_index', valueKey: 'userCode', unique: false }
         ]
     }
 

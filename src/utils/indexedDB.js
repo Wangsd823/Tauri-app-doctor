@@ -91,7 +91,7 @@ class IndexedDBBase {
                 name: 'record-data-table',
                 indexArr: [
                     { indexName: 'record_create_data_index', valueKey: 'createDate', unique: true },
-                    { indexName: 'record_user_id_index', valueKey: 'userCode', unique: true }
+                    { indexName: 'record_user_id_index', valueKey: 'userCode', unique: false }
                 ],
                 keyPath: 'recordId'
             }

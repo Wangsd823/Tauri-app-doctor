@@ -46,3 +46,20 @@ export const showDateTimeByFormart = (dateTime) => {
     const _day = _date.getDate()
     return `${_year}-${_month}-${_day}`
 }
+
+/**
+ * 图片转字节
+ * @param {File} file
+ * @returns
+ */
+export const imageToArrayBuffer = (file = null) => {
+    return new Promise((resolve, reject) => {
+        if (!file) return reject(null)
+        if (!file) return null
+        const fileReader = new FileReader()
+        fileReader.onload = (event) => {
+            resolve(event.target.result)
+        }
+        fileReader.readAsDataURL(file)
+    })
+}

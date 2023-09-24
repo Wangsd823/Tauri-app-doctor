@@ -8,21 +8,20 @@ import libraryDialog from './libraryDialog.vue'
 import { CommonUtils } from '../utils'
 
 const props = defineProps({
-    modelValue: { type: Boolean, default: false }
+    modelValue: { type: Boolean, default: false },
+    data: { type: Object, default: {} }
 })
 const _$emit = defineEmits(['update:modelValue', 'complete'])
 
 /**
  * 默认数据变量
  */
-// 用户基础数据
-const userBaseInfo = reactive(InitPatientData.initUserBaseInfo())
 // 病情信息
-const illnessInfo = reactive(InitPatientData.initIllnessInfo())
+let illnessInfo = reactive(InitPatientData.initIllnessInfo())
 // 诊断信息
 const diagnosticNote = ref('')
 // 处方信息
-const formulaInfo = reactive(InitPatientData.initFormulaInfo())
+let formulaInfo = reactive(InitPatientData.initFormulaInfo())
 // 按语
 const notesStr = ref('')
 
@@ -44,33 +43,33 @@ const resetFormulaSubList = () => {
     formulaInfo.subList.length = 0
 }
 const savePatientInfo = () => {
-    const addUserData = {
-        userBaseInfo: toRaw(userBaseInfo),
+    const addRecordData = {
         illnessInfo: toRaw(illnessInfo),
         formulaInfo: toRaw(formulaInfo),
         notesStr: notesStr.value,
         diagnosticNote: diagnosticNote.value
     }
-    _$emit('complete', addUserData)
+    _$emit('complete', addRecordData)
 }
 
 // 图片上传转化
 const onIllnessImageChange = async (uploadFile) => {
     const imageArraybuffer = await CommonUtils.imageToArrayBuffer(uploadFile.raw)
     illnessInfo.imageList.forEach(imageInfo => {
-        if(uploadFile.uid === imageInfo.uid){
+        if (uploadFile.uid === imageInfo.uid) {
             imageInfo.urlArrayBuffer = imageArraybuffer
         }
     })
-    // console.log({ a: imageArraybuffer })
 }
-
 
 /**
  * 清楚数据
  */
 const _clearData = () => {
-
+    // 病情信息
+    illnessInfo = reactive(InitPatientData.initIllnessInfo())
+    // 处方信息
+    formulaInfo = reactive(InitPatientData.initFormulaInfo())
 }
 const onDialogBeforeClosed = () => {
     _$emit('update:modelValue', false)
@@ -79,40 +78,31 @@ const onDialogBeforeClosed = () => {
 
 </script>
 <style scoped>
-.add_patient_container :deep(.el-overlay-dialog) {
+.add_follow_patient_container :deep(.el-overlay-dialog) {
     overflow: hidden;
 }
 
-.add_patient_container :deep(.el-dialog__body) {
+.add_follow_patient_container :deep(.el-dialog__body) {
     max-height: 35rem;
     overflow-y: scroll;
 }
 
-.add_patient_container :deep(.card-header) {
+.add_follow_patient_container :deep(.card-header) {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 </style>
 <template>
-    <div class="add_patient_container">
-        <el-dialog :model-value="modelValue" width="750px" title="新增患者医案" :destroy-on-close="true"
+    <div class="add_follow_patient_container">
+        <el-dialog :model-value="modelValue" width="750px" title="添加患者复诊记录" :destroy-on-close="true"
             @close="onDialogBeforeClosed">
-            <!-- 用户信息 -->
-            <el-form style="width: 100%;" label-position="left" label-width="100">
-                <el-form-item label="姓名">
-                    <el-input v-model="userBaseInfo.userName" placeholder="请输入姓名" />
-                </el-form-item>
-                <el-form-item label="年龄">
-                    <el-input-number v-model="userBaseInfo.userAge" :min="1" :max="100" />
-                </el-form-item>
-                <el-form-item label="联系方式">
-                    <el-input v-model="userBaseInfo.userPhone" />
-                </el-form-item>
-                <el-form-item label="常住地址">
-                    <el-input v-model="userBaseInfo.userAddress" :rows="3" type="textarea" />
-                </el-form-item>
-            </el-form>
+            <el-descriptions title="患者基础信息" :border="true">
+                <el-descriptions-item label="姓名" width="120px">{{ props.data.userName }}</el-descriptions-item>
+                <el-descriptions-item label="年龄" width="120px">{{ props.data.userAge }}</el-descriptions-item>
+                <el-descriptions-item label="联系方式" width="120px">{{ props.data.userPhone }}</el-descriptions-item>
+                <el-descriptions-item label="联系地址" width="120px">{{ props.data.userAddress }}</el-descriptions-item>
+            </el-descriptions>
             <el-divider />
             <el-card header="病情详情">
                 <el-input v-model="illnessInfo.comment" :rows="2" type="textarea" />
