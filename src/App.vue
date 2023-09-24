@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import Home from './components/Home.vue'
-import PatientRecords from './components/patientRecords.vue'
+import patientRecords from './components/patientRecords.vue'
 
 const activeIndex = ref('1')
 
@@ -53,7 +53,7 @@ const handleSelect = (key) => {
             </el-header>
             <el-main>
                 <Home v-if="activeIndex == 1" />
-                <PatientRecords v-if="activeIndex == 2" />
+                <patientRecords v-if="activeIndex == 2" />
             </el-main>
         </el-container>
     </div>
