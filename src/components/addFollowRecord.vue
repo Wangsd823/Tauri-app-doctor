@@ -61,6 +61,14 @@ const onIllnessImageChange = async (uploadFile) => {
         }
     })
 }
+const onFormulaInfoImageChange = async (uploadFile) => {
+    const imageArraybuffer = await CommonUtils.imageToArrayBuffer(uploadFile.raw)
+    formulaInfo.imageList.forEach(imageInfo => {
+        if (uploadFile.uid === imageInfo.uid) {
+            imageInfo.urlArrayBuffer = imageArraybuffer
+        }
+    })
+}
 
 /**
  * 清楚数据
@@ -130,6 +138,13 @@ const onDialogBeforeClosed = () => {
                     </div>
                 </template>
                 <el-input v-model="formulaInfo.comment" :rows="3" type="textarea" />
+                <div style="height: 10px;"></div>
+                <el-upload v-model:file-list="formulaInfo.imageList" action="#" :auto-upload="false"
+                    :on-change="onFormulaInfoImageChange" list-type="picture-card">
+                    <el-icon>
+                        <Plus />
+                    </el-icon>
+                </el-upload>
                 <div style="height: 10px;"></div>
                 <el-form :inline="true" label-position="left" label-width="200" style="width: 100%;">
                     <template v-for="info in formulaInfo.subList">

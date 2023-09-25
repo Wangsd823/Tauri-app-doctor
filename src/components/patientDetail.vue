@@ -93,6 +93,11 @@ const imageDataToPreviewList = (imageList) => {
                                     }}</el-descriptions-item>
                                 </template>
                             </el-descriptions>
+                            <template v-for="( imageData, index ) in  recordData.formulaInfo.imageList ">
+                                <el-image :src="imageData.urlArrayBuffer"
+                                    :preview-src-list="imageDataToPreviewList(recordData.formulaInfo.imageList)"
+                                    style="width: 200px;" :initial-index="0" fit="cover" />
+                            </template>
                         </el-card>
                         <el-card header="按语情况">
                             <div>{{ recordData.notesStr }}</div>
